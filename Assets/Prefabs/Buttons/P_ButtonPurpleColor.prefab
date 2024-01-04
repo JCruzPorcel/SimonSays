@@ -108,6 +108,50 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.7529412
       objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ColorButtonSound
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnColorButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: AudioManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: SimonSaysController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_IntArgument
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 8300000, guid: 695f65a1fb38c204884984abda48a135, type: 3}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.AudioClip, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
