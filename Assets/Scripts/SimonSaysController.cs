@@ -15,6 +15,7 @@ public class SimonSaysController : MonoBehaviour
     private Animator[] lightGo;
     [SerializeField] private TMPro.TextMeshProUGUI messageText;
     private bool canPlay = false;
+    public bool CanPlay { get { return canPlay; } }
     private bool isCountdownRunning = false;
 
     private enum Difficulty { Easy, Normal, Hard }
@@ -25,8 +26,12 @@ public class SimonSaysController : MonoBehaviour
     private float normalSequenceSpeed = 1f;
     private float hardSequenceSpeed = 0.5f;
 
+    private AudioManager audioManager;
+
     private void Start()
     {
+        audioManager = FindObjectOfType<AudioManager>();
+
         lightGo = new Animator[colors.Length];
 
         for (int i = 0; i < lightGo.Length; i++)
@@ -34,7 +39,7 @@ public class SimonSaysController : MonoBehaviour
             lightGo[i] = colorButtons[i].GetComponentInChildren<Animator>();
         }
 
-        messageText.text = "Select difficulty to start.";
+        messageText.text = "Select difficulty to start";
 
         canPlay = false;
     }
@@ -109,17 +114,25 @@ public class SimonSaysController : MonoBehaviour
     {
         canPlay = false;
         isCountdownRunning = true;
+        int counter = 0;
+
+        yield return new WaitForSeconds(.2f);
 
         messageText.text = "3";
         yield return new WaitForSeconds(1);
 
         messageText.text = "2";
+        audioManager.CounterSound(counter);
         yield return new WaitForSeconds(1);
 
         messageText.text = "1";
+        counter++;
+        audioManager.CounterSound(counter);
         yield return new WaitForSeconds(1);
 
         messageText.text = "Go!";
+        counter++;
+        audioManager.CounterSound(counter);
         yield return new WaitForSeconds(1);
 
         messageText.text = string.Empty;
@@ -134,7 +147,7 @@ public class SimonSaysController : MonoBehaviour
     {
         canPlay = false;
 
-        yield return new WaitForSeconds(1.25f);
+        yield return new WaitForSeconds(1);
 
         messageText.text = string.Empty;
 
@@ -174,7 +187,7 @@ public class SimonSaysController : MonoBehaviour
                 if (i >= computerSequence.Count || playerSequence[i] != computerSequence[i])
                 {
                     // El jugador ha perdido
-                    messageText.text = "You lost! Try again.";
+                    messageText.text = "You lost! Try again";
                     canPlay = false;
 
                     // Reiniciar el juego después de 1.5 segundos
@@ -186,7 +199,7 @@ public class SimonSaysController : MonoBehaviour
             if (playerSequence.Count == computerSequence.Count)
             {
                 // El jugador ha completado la secuencia
-                messageText.text = "You won! Next level.";
+                messageText.text = "You won! Next level";
                 playerSequence.Clear();
                 AddRandomColorToSequence();
                 StartCoroutine(PlaySequence());
@@ -205,7 +218,7 @@ public class SimonSaysController : MonoBehaviour
     {
         // Reiniciar el juego
         StopAllCoroutines();
-        isCountdownRunning = false;        
+        isCountdownRunning = false;
         computerSequence.Clear();
         playerSequence.Clear();
         StartGame();
