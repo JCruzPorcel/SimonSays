@@ -12,7 +12,7 @@ public class SimonSaysController : MonoBehaviour
     private List<int> computerSequence = new List<int>();
     private List<int> playerSequence = new List<int>();
 
-    private Animator[] lightGo;
+    private Animator[] lightAnim;
     [SerializeField] private TMPro.TextMeshProUGUI messageText;
     private bool canPlay = false;
     public bool CanPlay { get { return canPlay; } }
@@ -26,20 +26,26 @@ public class SimonSaysController : MonoBehaviour
     private float normalSequenceSpeed = 1f;
     private float hardSequenceSpeed = 0.5f;
 
+    private float maxSequenceSpeed = 0.2f; // Límite máximo para la velocidad de la secuencia
+    private float speedIncreaseFactor = 0.05f; // Factor de aumento de velocidad por acierto
+    private float currentSequenceSpeed;
+
     private AudioManager audioManager;
 
     private void Start()
     {
         audioManager = FindObjectOfType<AudioManager>();
 
-        lightGo = new Animator[colors.Length];
+        lightAnim = new Animator[colors.Length];
 
-        for (int i = 0; i < lightGo.Length; i++)
+        for (int i = 0; i < lightAnim.Length; i++)
         {
-            lightGo[i] = colorButtons[i].GetComponentInChildren<Animator>();
+            lightAnim[i] = colorButtons[i].GetComponentInChildren<Animator>();
         }
 
         messageText.text = "Select difficulty to start";
+
+        currentSequenceSpeed = GetSequenceSpeed(currentDifficulty);
 
         canPlay = false;
     }
@@ -80,6 +86,10 @@ public class SimonSaysController : MonoBehaviour
 
             currentDifficulty = (Difficulty)mode;
 
+            audioManager.PlayDifficultySound(0);
+
+            currentSequenceSpeed = GetSequenceSpeed(currentDifficulty);
+
             // Cambiar colores de los botones de dificultad
             UpdateDifficultyButtonColors();
 
@@ -119,21 +129,21 @@ public class SimonSaysController : MonoBehaviour
         yield return new WaitForSeconds(.2f);
 
         messageText.text = "3";
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1f);
 
         messageText.text = "2";
-        audioManager.CounterSound(counter);
-        yield return new WaitForSeconds(1);
+        audioManager.PlayCounterSound(counter);
+        yield return new WaitForSeconds(1f);
 
         messageText.text = "1";
         counter++;
-        audioManager.CounterSound(counter);
-        yield return new WaitForSeconds(1);
+        audioManager.PlayCounterSound(counter);
+        yield return new WaitForSeconds(1f);
 
         messageText.text = "Go!";
         counter++;
-        audioManager.CounterSound(counter);
-        yield return new WaitForSeconds(1);
+        audioManager.PlayCounterSound(counter);
+        yield return new WaitForSeconds(1f);
 
         messageText.text = string.Empty;
 
@@ -151,12 +161,10 @@ public class SimonSaysController : MonoBehaviour
 
         messageText.text = string.Empty;
 
-        float sequenceSpeed = GetSequenceSpeed(currentDifficulty);
-
         for (int i = 0; i < computerSequence.Count; i++)
         {
             ShowColor(computerSequence[i]);
-            yield return new WaitForSeconds(sequenceSpeed);
+            yield return new WaitForSeconds(currentSequenceSpeed);
         }
 
         canPlay = true;
@@ -165,7 +173,9 @@ public class SimonSaysController : MonoBehaviour
 
     private void ShowColor(int colorIndex)
     {
-        lightGo[colorIndex].SetTrigger(currentDifficulty.ToString());
+        audioManager.PlayButtonSound(colorIndex);
+
+        lightAnim[colorIndex].SetTrigger(currentDifficulty.ToString());
     }
 
     public void OnColorButtonClick(int buttonIndex)
@@ -188,6 +198,7 @@ public class SimonSaysController : MonoBehaviour
                 {
                     // El jugador ha perdido
                     messageText.text = "You lost! Try again";
+                    audioManager.PlayResultSound(false);
                     canPlay = false;
 
                     // Reiniciar el juego después de 1.5 segundos
@@ -200,9 +211,18 @@ public class SimonSaysController : MonoBehaviour
             {
                 // El jugador ha completado la secuencia
                 messageText.text = "You won! Next level";
+                audioManager.PlayResultSound(true);
+
                 playerSequence.Clear();
+
                 AddRandomColorToSequence();
                 StartCoroutine(PlaySequence());
+
+                // Incrementar la velocidad de la secuencia si el límite no se ha alcanzado
+                if (currentSequenceSpeed > maxSequenceSpeed)
+                {
+                    IncreaseSequenceSpeed();
+                }
             }
         }
     }
@@ -237,5 +257,11 @@ public class SimonSaysController : MonoBehaviour
             default:
                 return normalSequenceSpeed;
         }
+    }
+
+    private void IncreaseSequenceSpeed()
+    {
+        // Aumentar la velocidad de la secuencia según el factor de aumento
+        currentSequenceSpeed -= speedIncreaseFactor;
     }
 }

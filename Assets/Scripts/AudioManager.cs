@@ -2,52 +2,58 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    private SimonSaysController controller;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip[] audioClips;
+    [SerializeField] private AudioSource sfxAudioSource;
+    [SerializeField] private AudioSource musicAudioSource;
+    [SerializeField] private AudioSource sfxButtonAudioSource;
+    [SerializeField] private AudioClip[] difficultyClips;
+    [SerializeField] private AudioClip[] counterClips;
+    [SerializeField] private AudioClip[] buttonClips;
+    [SerializeField] private AudioClip[] resultClips;
 
-    void Start()
-    {
-        audioSource = GetComponent<AudioSource>();
-        controller = FindObjectOfType<SimonSaysController>();
-    }
+    private bool isSfxMuted = false;
+    private bool isMusicMuted = false;
 
-    private void PlaySound(AudioClip audioClip)
+    private void PlayAudioClip(AudioClip audioClip, AudioSource audioSource)
     {
         audioSource.clip = audioClip;
         audioSource.Play();
     }
 
-    public void ColorButtonSound(AudioClip audioClip)
+    public void PlayButtonSound(int soundIndex)
     {
-        bool canPlay = controller.CanPlay;
-
-        if (canPlay)
-        {
-            PlaySound(audioClip);
-        }
+        AudioClip audioClip = buttonClips[soundIndex];
+        PlayAudioClip(audioClip, sfxButtonAudioSource);
     }
 
-    public void CounterSound(int timer)
+    public void PlayDifficultySound(int soundIndex)
     {
-        AudioClip audioClip;
+        AudioClip audioClip = (soundIndex >= 0 && soundIndex < difficultyClips.Length) ? difficultyClips[soundIndex] : difficultyClips[0];
+        PlayAudioClip(audioClip, sfxAudioSource);
+    }
 
-        switch (timer)
-        {
-            case 0:
-                audioClip = audioClips[0];
-                break;
-            case 1:
-                audioClip = audioClips[1];
-                break;
-            case 2:
-                audioClip = audioClips[2];
-                break;
-            default:
-                audioClip = audioClips[0];
-                break;
-        }
+    public void PlayCounterSound(int soundIndex)
+    {
+        AudioClip audioClip = (soundIndex >= 0 && soundIndex < counterClips.Length) ? counterClips[soundIndex] : counterClips[0];
+        PlayAudioClip(audioClip, sfxAudioSource);
+    }
 
-        PlaySound(audioClip);
+    public void PlayResultSound(bool isVictory)
+    {
+        AudioClip audioClip = isVictory ? resultClips[0] : resultClips[1];
+        PlayAudioClip(audioClip, sfxAudioSource);
+    }
+
+    public void ToggleSfxMute()
+    {
+        isSfxMuted = !isSfxMuted;
+        sfxAudioSource.mute = isSfxMuted;
+        sfxButtonAudioSource.mute = isSfxMuted;
+    }
+
+    public void ToggleMusicMute()
+    {
+        isMusicMuted = !isMusicMuted;
+        musicAudioSource.mute = isMusicMuted;
     }
 }
+ 
