@@ -175,6 +175,8 @@ public class SimonSaysController : MonoBehaviour
     {
         audioManager.PlayButtonSound(colorIndex);
 
+        // Reiniciar las animaciones de los botones
+        lightAnim[colorIndex].Rebind();
         lightAnim[colorIndex].SetTrigger(currentDifficulty.ToString());
     }
 
