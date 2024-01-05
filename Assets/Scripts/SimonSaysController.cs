@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,17 +14,23 @@ public class SimonSaysController : MonoBehaviour
     private List<int> playerSequence = new List<int>();
 
     private Animator[] lightAnim;
-    [SerializeField] private TMPro.TextMeshProUGUI messageText;
+    [SerializeField] private TextMeshProUGUI messageText;
     private bool canPlay = false;
     public bool CanPlay { get { return canPlay; } }
     private bool isCountdownRunning = false;
+
+    private Color lastColor;
+    private int colorCount;
+
+    [SerializeField] private TextMeshProUGUI countTextPrefab;
+    [SerializeField] private Transform canvasTransform;
 
     private enum Difficulty { Easy, Normal, Hard }
     private Difficulty currentDifficulty = Difficulty.Normal;
 
     // Velocidades de secuencia para cada dificultad (ajusta según sea necesario)
-    private float easySequenceSpeed = 1.5f;
-    private float normalSequenceSpeed = 1f;
+    private float easySequenceSpeed = 1f;
+    private float normalSequenceSpeed = .75f;
     private float hardSequenceSpeed = 0.5f;
 
     private float maxSequenceSpeed = 0.2f; // Límite máximo para la velocidad de la secuencia
@@ -37,6 +44,9 @@ public class SimonSaysController : MonoBehaviour
         audioManager = FindObjectOfType<AudioManager>();
 
         lightAnim = new Animator[colors.Length];
+
+        lastColor = Color.clear;
+        colorCount = 0;
 
         for (int i = 0; i < lightAnim.Length; i++)
         {
@@ -156,6 +166,7 @@ public class SimonSaysController : MonoBehaviour
     private IEnumerator PlaySequence()
     {
         canPlay = false;
+        lastColor = Color.clear;
 
         yield return new WaitForSeconds(1);
 
@@ -168,12 +179,42 @@ public class SimonSaysController : MonoBehaviour
         }
 
         canPlay = true;
+        lastColor = Color.clear;
         messageText.text = "Your Turn";
     }
 
     private void ShowColor(int colorIndex)
     {
         audioManager.PlayButtonSound(colorIndex);
+
+        // Incrementar la cuenta si el color es igual al anterior
+        if (colors[colorIndex] == lastColor)
+        {
+            colorCount++;
+        }
+        else
+        {
+            colorCount = 1;  // Reiniciar la cuenta si el color ha cambiado
+        }
+
+        // Guardar el color actual
+        lastColor = colors[colorIndex];
+
+        if (colorCount > 1)
+        {
+            // Obtener la posición del botón
+            Vector3 buttonPosition = colorButtons[colorIndex].transform.position;
+
+            // Instanciar el prefab de TextMeshProUGUI
+            TextMeshProUGUI countText = Instantiate(countTextPrefab, canvasTransform);
+            countText.text = $"x{colorCount}";
+
+            // Establecer la posición del texto en relación con el botón
+            countText.transform.position = buttonPosition;
+
+            // Destruir el objeto de texto después de un tiempo
+            Destroy(countText.gameObject, 1f);
+        }
 
         // Reiniciar las animaciones de los botones
         lightAnim[colorIndex].Rebind();
