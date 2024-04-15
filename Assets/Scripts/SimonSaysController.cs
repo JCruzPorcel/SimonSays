@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SimonSaysController : MonoBehaviour
@@ -37,11 +38,15 @@ public class SimonSaysController : MonoBehaviour
     private float speedIncreaseFactor = 0.05f; // Factor de aumento de velocidad por acierto
     private float currentSequenceSpeed;
 
+    private int scoreValue = 0;
+
     private AudioManager audioManager;
+    private ScoreManager scoreManager;
 
     private void Start()
     {
         audioManager = FindObjectOfType<AudioManager>();
+        scoreManager = FindObjectOfType<ScoreManager>();
 
         lightAnim = new Animator[colors.Length];
 
@@ -213,7 +218,7 @@ public class SimonSaysController : MonoBehaviour
             countText.transform.position = buttonPosition;
 
             // Destruir el objeto de texto después de un tiempo
-            Destroy(countText.gameObject, 1f);
+            //Destroy(countText.gameObject, 1f);
         }
 
         // Reiniciar las animaciones de los botones
@@ -237,12 +242,15 @@ public class SimonSaysController : MonoBehaviour
         {
             for (int i = 0; i < playerSequence.Count; i++)
             {
+
                 if (i >= computerSequence.Count || playerSequence[i] != computerSequence[i])
                 {
                     // El jugador ha perdido
                     messageText.text = "You lost! Try again";
                     audioManager.PlayResultSound(false);
                     canPlay = false;
+
+                    scoreManager.CheckBestScoreAndSave();
 
                     // Reiniciar el juego después de 1.5 segundos
                     StartCoroutine(ResetGameAfterDelay(1.5f));
@@ -256,8 +264,9 @@ public class SimonSaysController : MonoBehaviour
                 messageText.text = "You won! Next level";
                 audioManager.PlayResultSound(true);
 
-                playerSequence.Clear();
+                scoreManager.AddScore(scoreValue);
 
+                playerSequence.Clear();
                 AddRandomColorToSequence();
                 StartCoroutine(PlaySequence());
 
@@ -270,6 +279,7 @@ public class SimonSaysController : MonoBehaviour
         }
     }
 
+
     private IEnumerator ResetGameAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -281,6 +291,8 @@ public class SimonSaysController : MonoBehaviour
     {
         // Reiniciar el juego
         StopAllCoroutines();
+        scoreManager.CheckBestScoreAndSave();
+        scoreManager.ResetScores();
         isCountdownRunning = false;
         computerSequence.Clear();
         playerSequence.Clear();
@@ -292,12 +304,16 @@ public class SimonSaysController : MonoBehaviour
         switch (difficulty)
         {
             case Difficulty.Easy:
+                scoreValue = 5;
                 return easySequenceSpeed;
             case Difficulty.Normal:
+                scoreValue = 10;
                 return normalSequenceSpeed;
             case Difficulty.Hard:
+                scoreValue = 15;
                 return hardSequenceSpeed;
             default:
+                scoreValue = 10;
                 return normalSequenceSpeed;
         }
     }
@@ -306,5 +322,14 @@ public class SimonSaysController : MonoBehaviour
     {
         // Aumentar la velocidad de la secuencia según el factor de aumento
         currentSequenceSpeed -= speedIncreaseFactor;
+    }
+
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }

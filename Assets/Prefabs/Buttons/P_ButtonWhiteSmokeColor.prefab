@@ -110,15 +110,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8568394504885837162, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
       propertyPath: m_Color.b
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8568394504885837162, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
       propertyPath: m_Color.g
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8568394504885837162, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
       propertyPath: m_Color.r
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8886494827512170530, guid: 77f4dcbf28f353d4494c542277eb92b3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
